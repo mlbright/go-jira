@@ -3,9 +3,10 @@ package jira
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"gopkg.in/Netflix-Skunkworks/go-jira.v0/data"
 	"github.com/howeyc/gopass"
+	"gopkg.in/Netflix-Skunkworks/go-jira.v0/data"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -100,6 +101,25 @@ func (c *Cli) CmdList() error {
 	if err != nil {
 		return err
 	}
+
+	d, ok := data.(map[string]interface{})
+	if !ok {
+		return errors.New("Could not find isssues!")
+	}
+
+	issues, ok := d["issues"].([]interface{})
+	if !ok {
+		return errors.New("Could not find issues!")
+	}
+
+	if _, ok := c.opts["browse"]; ok {
+		for _, issue := range issues {
+			if i, ok := issue.(map[string]interface{}); ok {
+				i["key"] = fmt.Sprintf("%s/browse/%s", c.endpoint, i["key"])
+			}
+		}
+	}
+
 	return runTemplate(c.getTemplate("list"), data, nil)
 }
 

@@ -122,7 +122,7 @@ func dateFormat(format string, content string) (string, error) {
 	return t.Format(format), nil
 }
 
-// RunTemplate will run the give templateContent as a golang text/template
+// RunTemplate will run the given templateContent as a golang text/template
 // and pass the provided data to the template execution.  It will write
 // the output to the provided "out" writer.
 func RunTemplate(templateContent string, data interface{}, out io.Writer) error {
